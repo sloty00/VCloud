@@ -37,3 +37,39 @@ VCloud es una plataforma basada en la nube que permite a empresas y usuarios ind
    - Capacidad para compartir archivos entre usuarios dentro del cloud.
      
 **Nota: Actualmente, el desarrollo del backend de VCloud está en curso. Se están implementando y probando nuevas funcionalidades y características para mejorar la plataforma. Esperamos lanzar una versión estable próximamente.**
+
+## Patrón Builder
+
+El patrón Builder es un patrón de diseño creacional que se utiliza para construir objetos complejos paso a paso. En "VCloud", se implementa el patrón Builder de la siguiente manera:
+
+### Roles del Patrón Builder
+
+- **Director (Builder Director)**: Supervisa el proceso de construcción paso a paso y finaliza el objeto complejo.
+
+- **Builder (Constructores concretos)**: Define interfaces para construir partes del objeto complejo.
+
+- **Producto (Producto complejo)**: Representa el objeto complejo construido a través del patrón Builder.
+
+### Componentes Específicos
+
+En el contexto de la administración de archivos en la nube:
+
+- **Groups**: Define segmentos dentro de la empresa del usuario para gestionar permisos y acceso a archivos.
+
+- **Entities**: Representa entidades (empresas) que tienen acceso y administran sus archivos en la plataforma.
+
+- **Users**: Usuarios individuales que interactúan con la plataforma para cargar, descargar y gestionar archivos personales y compartidos.
+
+### Ventajas del Patrón Builder en "VCloud"
+
+El uso del patrón Builder en "VCloud" ofrece las siguientes ventajas específicas para la administración de archivos en la nube:
+
+- **Separación de Responsabilidades**: Permite separar la construcción de objetos complejos (como la estructura de administración de archivos) de su representación y uso.
+
+- **Flexibilidad en la Creación de Entidades**: Facilita la creación de diferentes tipos de entidades (Grupos, Entities y Users) según las necesidades de acceso y gestión de archivos.
+
+- **Escalabilidad y Mantenibilidad**: Mejora la escalabilidad del sistema al poder agregar nuevas entidades o modificar las existentes sin afectar otras partes del sistema.
+
+- **Claridad y Organización del Código**: Mejora la legibilidad del código al estructurar la construcción de objetos complejos en etapas claras y bien definidas.
+
+Este enfoque permite a "VCloud" manejar de manera eficiente y escalable la administración de archivos en la nube, ofreciendo flexibilidad y claridad en la estructura y gestión de datos.
