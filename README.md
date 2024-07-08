@@ -36,4 +36,4 @@ VCloud es una plataforma basada en la nube que permite a empresas y usuarios ind
    - Administración basada en roles y permisos por entidades y grupos.
    - Capacidad para compartir archivos entre usuarios dentro del cloud.
      
-###Nota: Actualmente, el desarrollo del backend de VCloud está en curso. Se están implementando y probando nuevas funcionalidades y características para mejorar la plataforma. Esperamos lanzar una versión estable próximamente.
+**Nota: Actualmente, el desarrollo del backend de VCloud está en curso. Se están implementando y probando nuevas funcionalidades y características para mejorar la plataforma. Esperamos lanzar una versión estable próximamente.**
