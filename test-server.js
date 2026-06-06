@@ -1,4 +1,5 @@
-const app = require('./src/index.js'); // Ajusta la ruta si es necesario
+// backend/test-server.js
+const app = require('./src/index.js'); // Ajustado a la ruta correcta
 const http = require('http');
 
 const server = http.createServer(app);
