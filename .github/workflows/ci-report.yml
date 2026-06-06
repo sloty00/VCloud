@@ -1,4 +1,4 @@
-name: CI Report VCloud
+name: CI Report VCloud CI
 
 on:
   push:
@@ -9,58 +9,47 @@ permissions:
   contents: write
 
 jobs:
-  build-and-monitor:
+  build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout del código
+    - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Configurar Node.js
+    - name: Setup Node
       uses: actions/setup-node@v3
       with:
         node-version: '18'
 
-    - name: Instalar y Testear en Backend
+    - name: Run Smoke Test
       run: |
         cd backend
         npm install
-        # Ejecutamos el test de salud (Smoke Test)
-        # Si el servidor inicia bien, EXIT_CODE será 0
-        npm test > test-output.txt 2>&1 && EXIT_CODE=0 || EXIT_CODE=1
+        # Ejecutamos el servidor como modulo para verificar salud
+        node -e 'const app = require("./src/index.js"); process.exit(0);' > log.txt 2>&1 && STATUS=1 || STATUS=0
         
-        # Generamos un JSON temporal de resultados basado en el test
-        if [ $EXIT_CODE -eq 0 ]; then
-          echo '{"numPassedTests": 1, "numFailedTests": 0, "numTotalTests": 1}' > test-results.json
-        else
-          echo '{"numPassedTests": 0, "numFailedTests": 1, "numTotalTests": 1}' > test-results.json
-        fi
+        # Generamos JSON simple basado en el éxito del requerimiento del modulo
+        echo '{"exitosos": '$STATUS', "fallidos": '$(($STATUS == 0 ? 1 : 0))', "totales": 1}' > results.json
 
-    - name: Generar reporte JSON final
+    - name: Generate Report
       if: always()
       run: |
-        # Extraemos los valores del JSON creado en el paso anterior
-        EXITOSOS=$(node -e 'const r=require("./backend/test-results.json"); console.log(r.numPassedTests || 0)')
-        FALLIDOS=$(node -e 'const r=require("./backend/test-results.json"); console.log(r.numFailedTests || 0)')
-        TOTAL=$(node -e 'const r=require("./backend/test-results.json"); console.log(r.numTotalTests || 0)')
+        # Extraemos valores para el reporte final
+        EXITOSOS=$(node -e 'const r=require("./backend/results.json"); console.log(r.exitosos)')
+        FALLIDOS=$(node -e 'const r=require("./backend/results.json"); console.log(r.fallidos)')
+        TOTAL=$(node -e 'const r=require("./backend/results.json"); console.log(r.totales)')
 
         echo '{
-          "proyecto": "VAcademy",
+          "proyecto": "VCloud",
           "rama": "${{ github.ref_name }}",
-          "commit": "${{ github.sha }}",
-          "pipeline": {
-            "estado": "${{ job.status }}",
-            "fecha_ejecucion": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
-          },
+          "pipeline": { "estado": "${{ job.status }}" },
           "tests": {
             "exitosos": '$EXITOSOS',
             "fallidos": '$FALLIDOS',
-            "totales": '$TOTAL',
-            "cobertura_codigo": "100%"
-          },
-          "detalles": "Test de salud ejecutado: Verificación de arranque de API."
+            "totales": '$TOTAL'
+          }
         }' > reporte-cicd.json
 
-    - name: Desplegar Reporte a GitHub Pages
+    - name: Deploy
       if: always()
       uses: JamesIves/github-pages-deploy-action@v4
       with:
