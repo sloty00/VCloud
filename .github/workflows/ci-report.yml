@@ -20,22 +20,26 @@ jobs:
 
     - name: Instalar dependencias y Testear
       run: |
+        cd backend
         npm install
-        # Ejecuta tests y genera reporte JSON compatible con tu dashboard
-        npm test -- --json --outputFile=test-results.json || echo "Los tests fallaron, generando reporte de error..."
+        # Ejecuta tests y guarda el resultado en la carpeta backend
+        npm test -- --json --outputFile=results.json || echo "Los tests fallaron, continuando..."
 
     - name: Generar reporte JSON
       if: always()
       run: |
-        # Extraemos valores reales si el archivo de test existe
-        if [ -f test-results.json ]; then
-          EXITOSOS=$(node -e 'const r=require("./test-results.json"); console.log(r.numPassedTests || 0)')
-          FALLIDOS=$(node -e 'const r=require("./test-results.json"); console.log(r.numFailedTests || 0)')
+        # Accedemos a la carpeta backend para leer el resultado
+        cd backend
+        if [ -f results.json ]; then
+          EXITOSOS=$(node -e 'const r=require("./results.json"); console.log(r.numPassedTests || 0)')
+          FALLIDOS=$(node -e 'const r=require("./results.json"); console.log(r.numFailedTests || 0)')
         else
           EXITOSOS=0
-          FALLIDOS=0
+          FALLIDOS=1
         fi
 
+        # Volvemos a la raíz para generar el reporte para GitHub Pages
+        cd ..
         echo '{
           "proyecto": "VCloud",
           "rama": "${{ github.ref_name }}",
@@ -45,8 +49,8 @@ jobs:
             "fecha_ejecucion": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
           },
           "tests": {
-            "exitosos": 1,
-            "fallidos": 0,
+            "exitosos": '$EXITOSOS',
+            "fallidos": '$FALLIDOS',
             "cobertura_codigo": "100%"
           },
           "detalles": "Ecosistema API Node.js integrado en la nube."
