@@ -22,26 +22,28 @@ jobs:
 
     - name: Ejecutar Test y Reportar
       run: |
+        # 1. Instalamos dependencias
         cd backend
         npm install
-        # Buscamos el archivo prisma donde realmente está (asumiendo que está en backend/prisma/)
-        # Si tu schema está en otra ruta, ajústalo aquí
-        npx prisma generate --schema=prisma/schema.prisma
         
-        # Ejecutamos el test
+        # 2. Intentamos generar prisma sin forzar ruta, 
+        # a veces basta con estar en la carpeta donde está el schema
+        npx prisma generate
+        
+        # 3. Ejecutamos el test y guardamos el resultado en la RAÍZ (../)
         if node -e 'const createServer = require("./src/index.js"); const app = createServer(); process.exit(0);' > log.txt 2>&1; then
-          echo '{"exitosos": 1, "fallidos": 0, "totales": 1}' > results.json
+          echo '{"exitosos": 1, "fallidos": 0, "totales": 1}' > ../results.json
         else
-          echo '{"exitosos": 0, "fallidos": 1, "totales": 1}' > results.json
+          echo '{"exitosos": 0, "fallidos": 1, "totales": 1}' > ../results.json
         fi
 
     - name: Generar Reporte Final
       if: always()
       run: |
-        # Ya estamos en el root, volvemos a entrar a backend para leer el archivo
-        EXITOSOS=$(node -e 'const r=require("./backend/results.json"); console.log(r.exitosos)')
-        FALLIDOS=$(node -e 'const r=require("./backend/results.json"); console.log(r.fallidos)')
-        TOTAL=$(node -e 'const r=require("./backend/results.json"); console.log(r.totales)')
+        # Ahora leemos el JSON directamente de la raíz
+        EXITOSOS=$(node -e 'const r=require("./results.json"); console.log(r.exitosos)')
+        FALLIDOS=$(node -e 'const r=require("./results.json"); console.log(r.fallidos)')
+        TOTAL=$(node -e 'const r=require("./results.json"); console.log(r.totales)')
 
         echo '{
           "proyecto": "VCloud",
