@@ -24,6 +24,9 @@ jobs:
       run: |
         cd backend
         npm install
+        # Generamos el cliente de Prisma para que el test no falle
+        npx prisma generate
+        
         # Ejecutamos el factory y verificamos la carga del modulo
         if node -e 'const createServer = require("./src/index.js"); const app = createServer(); process.exit(0);' > log.txt 2>&1; then
           echo '{"exitosos": 1, "fallidos": 0, "totales": 1}' > results.json
