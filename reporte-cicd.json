@@ -1,10 +1,10 @@
 {
   "proyecto": "VCloud",
   "rama": "main",
-  "commit": "abe21158384475257618bf459b73ff54c28792fc",
+  "commit": "603a003ceba14b0209347729d5de65f697669158",
   "pipeline": {
     "estado": "failure",
-    "fecha_ejecucion": "2026-06-06T14:15:26Z"
+    "fecha_ejecucion": "2026-06-06T14:17:32Z"
   },
   "tests": {
     "exitosos": 1,
