@@ -37,7 +37,7 @@ jobs:
         fi
 
         echo '{
-          "proyecto": "BICOM-API-Ecommerce",
+          "proyecto": "VCloud",
           "rama": "${{ github.ref_name }}",
           "commit": "${{ github.sha }}",
           "pipeline": {
