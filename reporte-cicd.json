@@ -1,14 +1,15 @@
 {
   "proyecto": "VCloud",
   "rama": "main",
-  "commit": "7d4e0e4a650a2d00660d2e563631ca78f1df0ff5",
+  "commit": "698c727b43c41f53d1dadf32f2d7d25899e95582",
   "pipeline": {
     "estado": "SUCCESS",
-    "fecha": "2026-06-06T14:27:19Z"
+    "fecha": "2026-06-06T15:21:04Z"
   },
   "tests": {
     "exitosos": 1,
-    "fallidos": 0
+    "fallidos": 0,
+    "cobertura_codigo": "100%"
   },
   "detalles": "Reporte generado manualmente sin dependencias."
 }
