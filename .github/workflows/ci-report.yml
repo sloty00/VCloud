@@ -20,20 +20,21 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Run Smoke Test
+    - name: Ejecutar Test y Reportar
       run: |
         cd backend
         npm install
-        # Ejecutamos el servidor como modulo para verificar salud
-        node -e 'const app = require("./src/index.js"); process.exit(0);' > log.txt 2>&1 && STATUS=1 || STATUS=0
-        
-        # Generamos JSON simple basado en el éxito del requerimiento del modulo
-        echo '{"exitosos": '$STATUS', "fallidos": '$(($STATUS == 0 ? 1 : 0))', "totales": 1}' > results.json
+        # Ejecutamos el factory y verificamos la carga del modulo
+        if node -e 'const createServer = require("./src/index.js"); const app = createServer(); process.exit(0);' > log.txt 2>&1; then
+          echo '{"exitosos": 1, "fallidos": 0, "totales": 1}' > results.json
+        else
+          echo '{"exitosos": 0, "fallidos": 1, "totales": 1}' > results.json
+          cat log.txt
+        fi
 
-    - name: Generate Report
+    - name: Generar Reporte Final
       if: always()
       run: |
-        # Extraemos valores para el reporte final
         EXITOSOS=$(node -e 'const r=require("./backend/results.json"); console.log(r.exitosos)')
         FALLIDOS=$(node -e 'const r=require("./backend/results.json"); console.log(r.fallidos)')
         TOTAL=$(node -e 'const r=require("./backend/results.json"); console.log(r.totales)')
