@@ -2,17 +2,20 @@
 > backend@1.0.0 test
 > node test-server.js
 
-node:internal/modules/cjs/loader:1143
-  throw err;
-  ^
+/home/runner/work/VCloud/VCloud/backend/node_modules/.prisma/client/default.js:43
+    throw new Error('@prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.');
+    ^
 
-Error: Cannot find module '/home/runner/work/VCloud/VCloud/backend/test-server.js'
-    at Module._resolveFilename (node:internal/modules/cjs/loader:1140:15)
-    at Module._load (node:internal/modules/cjs/loader:981:27)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:128:12)
-    at node:internal/main/run_main_module:28:49 {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: []
-}
+Error: @prisma/client did not initialize yet. Please run "prisma generate" and try to import it again.
+    at new PrismaClient (/home/runner/work/VCloud/VCloud/backend/node_modules/.prisma/client/default.js:43:11)
+    at Object.<anonymous> (/home/runner/work/VCloud/VCloud/backend/src/prismaClient.js:2:16)
+    at Module._compile (node:internal/modules/cjs/loader:1364:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1422:10)
+    at Module.load (node:internal/modules/cjs/loader:1203:32)
+    at Module._load (node:internal/modules/cjs/loader:1019:12)
+    at Module.require (node:internal/modules/cjs/loader:1231:19)
+    at require (node:internal/modules/helpers:177:18)
+    at Object.<anonymous> (/home/runner/work/VCloud/VCloud/backend/src/Services/userService.js:1:16)
+    at Module._compile (node:internal/modules/cjs/loader:1364:14)
 
 Node.js v18.20.8
