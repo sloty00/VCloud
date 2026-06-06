@@ -1,0 +1,15 @@
+{
+  "proyecto": "VCloud",
+  "rama": "main",
+  "commit": "abe21158384475257618bf459b73ff54c28792fc",
+  "pipeline": {
+    "estado": "failure",
+    "fecha_ejecucion": "2026-06-06T14:15:26Z"
+  },
+  "tests": {
+    "exitosos": 1,
+    "fallidos": 0,
+    "cobertura_codigo": "100%"
+  },
+  "detalles": "Ecosistema API Node.js integrado en la nube."
+}
