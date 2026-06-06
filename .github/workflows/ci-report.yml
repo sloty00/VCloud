@@ -12,7 +12,7 @@ jobs:
   build-and-monitor:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout del codigo
+    - name: Checkout del código
       uses: actions/checkout@v3
 
     - name: Configurar Node.js
@@ -20,27 +20,31 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Instalar y Testear
+    - name: Instalar y Testear en Backend
       run: |
         cd backend
         npm install
-        # Ejecutamos tests y generamos el JSON de resultados
-        npm test -- --json --outputFile=test-results.json || true
-
-    - name: Generar reporte JSON
-      if: always()
-      run: |
-        # Verificamos si existen los resultados, sino usamos valores cero
-        if [ -f backend/test-results.json ]; then
-          EXITOSOS=$(node -e 'const r=require("./backend/test-results.json"); console.log(r.numPassedTests || 0)')
-          FALLIDOS=$(node -e 'const r=require("./backend/test-results.json"); console.log(r.numFailedTests || 0)')
-          TOTAL=$(node -e 'const r=require("./backend/test-results.json"); console.log(r.numTotalTests || 0)')
+        # Ejecutamos el test de salud (Smoke Test)
+        # Si el servidor inicia bien, EXIT_CODE será 0
+        npm test > test-output.txt 2>&1 && EXIT_CODE=0 || EXIT_CODE=1
+        
+        # Generamos un JSON temporal de resultados basado en el test
+        if [ $EXIT_CODE -eq 0 ]; then
+          echo '{"numPassedTests": 1, "numFailedTests": 0, "numTotalTests": 1}' > test-results.json
         else
-          EXITOSOS=0; FALLIDOS=0; TOTAL=0
+          echo '{"numPassedTests": 0, "numFailedTests": 1, "numTotalTests": 1}' > test-results.json
         fi
 
+    - name: Generar reporte JSON final
+      if: always()
+      run: |
+        # Extraemos los valores del JSON creado en el paso anterior
+        EXITOSOS=$(node -e 'const r=require("./backend/test-results.json"); console.log(r.numPassedTests || 0)')
+        FALLIDOS=$(node -e 'const r=require("./backend/test-results.json"); console.log(r.numFailedTests || 0)')
+        TOTAL=$(node -e 'const r=require("./backend/test-results.json"); console.log(r.numTotalTests || 0)')
+
         echo '{
-          "proyecto": "VCloud",
+          "proyecto": "VAcademy",
           "rama": "${{ github.ref_name }}",
           "commit": "${{ github.sha }}",
           "pipeline": {
@@ -48,15 +52,16 @@ jobs:
             "fecha_ejecucion": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
           },
           "tests": {
-            "exitosos": '1',
-            "fallidos": '0',
-            "totales": '1',
+            "exitosos": '$EXITOSOS',
+            "fallidos": '$FALLIDOS',
+            "totales": '$TOTAL',
             "cobertura_codigo": "100%"
           },
-          "detalles": "Pipeline automatizado para VCloud (Backend)."
+          "detalles": "Test de salud ejecutado: Verificación de arranque de API."
         }' > reporte-cicd.json
 
-    - name: Desplegar a GitHub Pages
+    - name: Desplegar Reporte a GitHub Pages
+      if: always()
       uses: JamesIves/github-pages-deploy-action@v4
       with:
         folder: .
